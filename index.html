@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Lent</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+    <link href='https://fonts.googleapis.com/css?family=Josefin+Sans' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="css/style.css">
+    <script language="javascript" type="text/javascript" src="js/p5.min.js"></script>
+    <script src="js/three.js"></script>
+    <link rel="stylesheet" type="text/css" media="all" href="css/animate.css">
+    <script language="javascript" type="text/javascript" src="js/p5.sound.min.js"></script>
+    <script src="js/getData.js"></script>
+    <!--<script type='text/javascript' src="p5.dom.js"></script>-->
+    <style>
+    #modelCanvas {
+        height: 100%;
+        width: 100%;
+    }
+    </style>
+</head>
+<body onload=getAll(responses)>
+    <div id="container" class="container" style=" z-index:-14;">
+            <div id="output" class="container" style=" z-index:-500;">
+            <h1 id="fadingTitle">
+    <ul>
+        <li class="animated fadeOutLeftBig">l</li>
+        <li class="animated fadeOutLeft">e</li>
+        <li class="animated fadeOutRight">n</li>
+        <li class="animated fadeOutRightBig">t</li>
+    </ul>
+</h1>
+                <script src="js/index.js"></script>
+            </div>
+    </div>
+    <div id="title"><h1>PROJECT LENT</h1>
+        <div id="legend"></div>
+        <div id="description">
+         <h2>Turning library technology into art.</h2>
+         <p>
+            LENT is a pie and graphical visualization of a few devices available for checkout in Hunt Library. 
+            <br>On the left is the pie chart, where the circumference represents the total amount of devices.
+			Each "slice" of the chart represents a device available to be lent out.  If the "slice" is full,
+			it means that all devices of that type are currently being checked out by a user of the library.
+			The legend next to the chart illustrates each device's visualizer counterpart, as well as the number
+			of devices available to be checked out.
+            <br>On the right is a more visual representation, with each device being represented by 
+            its own shape shown in the legend.
+         </p>
+         <br>
+            <img id="logo-img" src="CodeArtLogo.png">
+            <span id="logo-descript">This project is a submission to the Code+Art Student Visualization Contest.<br>
+            GitHub: go.ncsu.edu/codeartlent
+            </span>
+            
+        </div>
+   </div>
+
+   <script>
+    var responses = [];
+    var deviceCheckedOut = [];
+
+    //getAll(responses);
+
+    setTimeout(function() {   
+        var dataset = [];
+        var j = 0;
+        responses.forEach(function(device){
+          //getDeviceData(deviceid);
+          dataset.push({
+            label : device.name,
+            count : device.total
+          });
+          deviceCheckedOut.push(device.checkedout); // checked out
+          //console.log("ID: " + device.id + " total: " + device.total + " checked out: " + device.checkedout);
+        });
+
+        var width = 1704;
+        var height = 900;
+        var radius = (Math.min(width, height) / 2)-5;
+
+            // set colors to be assigned to the names
+            // TODO automate domain/range
+        var color = d3.scale.ordinal()
+               .domain(["MacBook", "Windows Laptop", "iPad", "TI-83 Plus Calculator", "Windows Surface Tablet", "Bamboo Fun Tablet", "Raspberry Pi", "Arduino", "Chromebook"])
+               .range(["#00C1B5", "#A2E0F4" , "#7F95CC", "#00CC00", "#F8A5B7", "#F9DE57", "#EA4B53", "#BF74B4", "#F16E1E"]);
+
+        var svg = d3.select('#legend').append('svg').attr('width', width)
+            .attr('height', height).append('g').attr(
+                'transform',
+                'translate(' + ((width/2)-380) + ',' + (height/2)
+                    + ')');
+            d3.select('#legend').attr("align","center");
+            
+            var arcPhantom = d3.svg.arc()
+                .innerRadius(0)
+                .outerRadius(radius);
+                            
+        var arc = d3.svg.arc().innerRadius(radius)
+            .outerRadius(radius);
+
+        var pie = d3.layout.pie().value(function(d) {
+          return d.count;
+        }).sort(null);
+
+            
+            var path = svg.selectAll('path')
+               .data(pie(dataset))
+               .enter()
+               .append('path')
+               .attr('d', arc)
+               .attr('fill', function(d, i) { 
+                 return color(d.data.label);
+        }); 
+           
+        // select each arc, to set each inner radius to the total checked out
+        svg.selectAll(".arc").data(function(d) {
+          return pie(dataset);
+        }).enter().append("path").attr("class", "arc").attr("d",
+            function(d, i) {
+              return arc.innerRadius((getRadius()))(d, i);
+            }).style("fill", function(d) {
+          return color(d.data.label);
+        });
+
+        function getRadius() {
+          var checked = deviceCheckedOut[j];
+          var total = responses[j].total;
+		  var percent = 0;
+		  //var name = responses[j].name;
+		  j++;
+		  if( checked === 0 ) {
+			percent =  0;
+		  } else {
+            //console.log( name + " Total: " + total + " checked out: " + checked);
+			// the "slice" should fill in what is avaialable, and take out the checked out chunk
+            var p = (checked/total);
+            percent =  p*radius;
+		  }
+			//console.log(name + " Percent: " + percent);
+			return percent;
+        }
+            
+            
+            var legendRectSize = 75;                                  
+            var legendSpacing = 20;  
+            var legend = svg.selectAll('.legend')
+             .data(color.domain())
+             .enter()
+             .append('g')
+             .attr('class', 'legend')
+             .attr('transform', function(d, i) { 
+               var height = legendRectSize + legendSpacing;
+               var offset =  height * color.domain().length / 2;
+               var horz = radius+legendSpacing*2;
+               var vert = i * height - offset;
+               return 'translate(' + horz + ',' + vert + ')';
+             });
+
+           legend.append('rect')
+             .attr('width', legendRectSize)
+             .attr('height', legendRectSize)
+             .style('fill', color)
+             .style('stroke', color);
+             
+            // add number of devices out of total
+            legend.append('text')
+             .attr('x', legendRectSize + legendSpacing + 80)
+             .attr('y', legendRectSize - legendSpacing)
+             .text(function(d) { 
+                  //console.log(d);
+                  return d + ": " + getValues(d)}) 
+             .style('font-size','45px')
+             .style('fill','white');
+            
+            function getValues(d){
+               var device = d.trim();
+               for(var i = 0; i < responses.length; i++) {
+                  if(responses[i].name == device){
+                        return((responses[i].total - responses[i].checkedout) + " of " + responses[i].total);
+                  }
+               }
+            }
+           
+             // apply "border"
+            var phantomArcs = svg.selectAll("g.phantom-arc")
+                .data(pie(dataset))
+                .enter()
+                .append("g")
+                .attr("class", "phantom-arc");
+            
+            phantomArcs.append("path")
+                .attr("fill", 'white')
+                .attr("fill-opacity", 0.1)
+                .attr("d", arcPhantom).style('stroke', function(d) {
+                  return color(d.data.label)})
+                .style('stroke-width', 3);
+            
+            // apply the icons to the legend
+            var imgs1 = svg.append("g")
+               imgs1.append("svg:image")
+               .attr("xlink:href", "./img/Mac.png")
+               .attr("x", 570)
+               .attr("y", -427.5)
+               .attr("width", "75")
+               .attr("height", "75");
+               
+            var imgs2 = svg.append("g")
+               imgs2.append("svg:image")
+               .attr("xlink:href", "./img/WinLaptop.png")
+               .attr("x", 570)
+               .attr("y", -332.5)
+               .attr("width", "75")
+               .attr("height", "75");
+            
+            var imgs3 = svg.append("g")
+               imgs3.append("svg:image")
+               .attr("xlink:href", "./img/iPad.png")
+               .attr("x", 570)
+               .attr("y", -237.5)
+               .attr("width", "75")
+               .attr("height", "75");
+            
+            var imgs4 = svg.append("g")
+               imgs4.append("svg:image")
+               .attr("xlink:href", "./img/TI.png")
+               .attr("x", 570)
+               .attr("y", -142.5)
+               .attr("width", "75")
+               .attr("height", "75");
+            
+            var imgs5 = svg.append("g")
+               imgs5.append("svg:image")
+               .attr("xlink:href", "./img/WinTablet.png")
+               .attr("x", 570)
+               .attr("y", -47.5)
+               .attr("width", "75")
+               .attr("height", "75");
+            
+            var imgs6 = svg.append("g")
+               imgs6.append("svg:image")
+               .attr("xlink:href", "./img/Bamboo.png")
+               .attr("x", 570)
+               .attr("y", 47.5)
+               .attr("width", "75")
+               .attr("height", "75");
+               
+            var imgs7 = svg.append("g")
+               imgs7.append("svg:image")
+               .attr("xlink:href", "./img/RPi.png")
+               .attr("x", 570)
+               .attr("y", 142.5)
+               .attr("width", "75")
+               .attr("height", "75");
+            
+            var imgs8 = svg.append("g")
+               imgs8.append("svg:image")
+               .attr("xlink:href", "./img/Arduino.png")
+               .attr("x", 570)
+               .attr("y", 237.5)
+               .attr("width", "75")
+               .attr("height", "75");
+            
+            var imgs9 = svg.append("g")
+               imgs9.append("svg:image")
+               .attr("xlink:href", "./img/Chromebook.png")
+               .attr("x", 570)
+               .attr("y", 332.5)
+               .attr("width", "75")
+               .attr("height", "75");
+            
+      },3750);
+    setTimeout(function() {location.reload(); },180000);
+    </script>
+</div>
+</body>
+    <script src="collada/ColladaLoader.js"></script>
+    <script src="js/Shape.js"></script>
+    <script src="js/MacBook.js"></script>
+    <script src="js/WindowsLap.js"></script>
+    <script src="js/iPad.js"></script>
+    <script src="js/Calculator.js"></script>
+    <script src="js/BambooTab.js"></script>
+    <script src="js/Ardunio.js"></script>
+    <script src="js/ChromeBook.js"></script>
+    <script src="js/WindowsTab.js"></script>
+    <script src="js/Raspberry.js"></script>
+    <script src="js/ActiveDevices.js"></script>
+    <script src="js/lent.js"></script>
+    <!--<script src="js/sketch.js"></script>-->
+</html>
+<!--
+<div style="background-color:yellow; width:300px; height:100px; position:relative; top:-60px; left:35px; z-index:1;">
+</div>
+
+<!--<script language="javascript" type="text/javascript" src="p5.js"></script>-->
+<!--<script type='text/javascript' src="p5.dom.js"></script>-->

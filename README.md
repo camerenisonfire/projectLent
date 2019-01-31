@@ -1,0 +1,6 @@
+# Project LENT
+This project was created as apart of a NCSU's CSC342 Fall 2015 CodeArt project and competition. 
+
+Currently deprecated project due to not being hosted on NCSU web servers. This is required to get the necessary data from NCSU Libraries. While the device lending data can not be retrieved, various other aspects can be references for examples for ThreeJs, D3js, and P5js.
+
+LENT is a pie and graphical visualization of a few devices available for checkout in Hunt Library. On the left is the pie chart, where the circumference represents the total amount of devices. Each "slice" of the chart represents a device available to be lent out.  If the "slice" is full, it means that all devices of that type are currently being checked out by a user of the library. The legend next to the chart illustrates each device's visualizer counterpart, as well as the number of devices available to be checked out. On the right is a more visual representation, with each device being represented by its own shape shown in the legend.

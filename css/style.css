@@ -1,0 +1,133 @@
+/*CSS Reset required or it doesnt play right with Chrome'*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+
+body {
+    overflow: hidden;
+}
+
+/*CSS for the key's title*/
+#title{
+    background-color: black;
+    text-align: center;
+    color: white;
+    font-size: 169px;
+    float: left;
+    height: 208px;
+    position: absolute;
+    width: 1704px;
+    font-family: 'Josefin Sans', sans-serif;
+}
+
+/*CSS for the key or legend*/
+#legend {
+    background-color: black;
+    float: left;
+    height:1000px;
+    position: relative;
+    width: 1704px;
+}
+
+/*CSS for the project description */
+#description {
+    background-color: black;
+    float: left;
+    height:1040px;
+    position: relative;
+    width: 1704px;
+    font-size: 65px;
+    text-align: left;
+}
+
+p {
+   font-size: 45px;
+}
+
+/*Paragraph in description div*/
+#description p, #description h2 {
+    margin-left: 100px;
+    margin-right: 100px;
+}
+
+/*CSS for the canvas area*/
+canvas {
+    margin-left: 1704px;
+}
+
+.container {
+    z-index:2;
+    position:absolute;
+    height: 2240px;
+    width: 5112px;
+}
+
+/*Code+Art Logo styling*/
+#logo-img {
+    height: 140px;;
+    width: 470px;
+    float: left;
+    position: absolute;
+    bottom: 0;
+    left: 100px;
+}
+
+#logo-descript {
+    float: left;
+    margin-left: 100px;
+    margin-right: 100px;
+    font-size: 45px;
+    bottom: 0;
+    left: 1140px; /* 100 + 940 + 100 */
+}
+
+@font-face {
+    font-family: "mininal";
+    src: url('../fonts/Dense-Regular.otf') format('opentype');
+}
+
+#fadingTitle{
+    width: 100%;
+    position: absolute;
+    padding-left: 1600px;
+    text-align: center;
+    color:#CCFFCC;
+    font: 160px "mininal";
+    text-transform: uppercase;
+    background-color: transparent;
+}
+
+ul {
+    list-style-type: none;
+    display: inline-flex;
+}
+
+ul li{
+
+    padding-left: 1.5em;
+    display: inline-block;
+}
+
+@-webkit-keyframes fadeInRightBig {
+
+
+}
+
